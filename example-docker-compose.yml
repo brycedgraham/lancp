@@ -1,0 +1,9 @@
+services:
+  api:
+    image: physeo/lancp:latest
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+  redis:
+    image: redis:alpine
