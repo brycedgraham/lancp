@@ -15,7 +15,7 @@ async def get_clipboard(request: Request):
 
 @app.get("/get", response_class=PlainTextResponse)
 def get_clipboard():
-    return rdb.get("clipboard") or ""
+    return rdb.get("shared_clipboard") or ""
 
 @app.post("/update")
 async def update_clipboard(value: str = Form(...)):
