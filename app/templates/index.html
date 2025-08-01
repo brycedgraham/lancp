@@ -23,8 +23,18 @@
         });
     }
 
-    function manualUpdate() {
-      updateClipboard(); // One-off fetch when button is clicked
+    function saveClipboard() {
+      const value = document.getElementById('clipboard-box').value;
+
+      fetch('/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `value=${encodeURIComponent(value)}`
+      }).then(() => {
+        console.log("Saved successfully.");
+      });
     }
   </script>
 </head>
@@ -33,16 +43,11 @@
 
   <textarea id="clipboard-box" rows="10" cols="50">{{ value }}</textarea><br><br>
 
-  <!-- Toggle checkbox for auto-polling -->
+  <!-- Auto update checkbox -->
   <label>
     <input type="checkbox" onchange="togglePolling(this)"> Auto Update
   </label>
-  <button onclick="manualUpdate()">Update</button>
-
-  <!-- Form to submit new clipboard content -->
-  <form action="/update" method="post">
-    <input type="text" name="value" placeholder="New clipboard value">
-    <button type="submit">Send</button>
-  </form>
+  <button onclick="updateClipboard()">Update</button>
+  <button onclick="saveClipboard()">Save</button>
 </body>
 </html>
