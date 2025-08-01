@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from redis import Redis
 from starlette.requests import Request
@@ -12,6 +12,10 @@ rdb = Redis(host="redis", port=6379, decode_responses=True)
 async def get_clipboard(request: Request):
     value = rdb.get("shared_clipboard") or ""
     return templates.TemplateResponse("index.html", {"request": request, "value": value})
+
+@app.get("/get", response_class=PlainTextResponse)
+def get_clipboard():
+    return rdb.get("clipboard") or ""
 
 @app.post("/update")
 async def update_clipboard(value: str = Form(...)):

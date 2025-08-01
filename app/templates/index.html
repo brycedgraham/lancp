@@ -1,11 +1,48 @@
 <!DOCTYPE html>
 <html>
-<head><title>LAN Clipboard</title></head>
+<head>
+  <title>LAN Clipboard</title>
+  <script>
+    let polling = false;
+    let intervalId = null;
+
+    function togglePolling(checkbox) {
+      polling = checkbox.checked;
+      if (polling) {
+        intervalId = setInterval(updateClipboard, 2000);
+      } else {
+        clearInterval(intervalId);
+      }
+    }
+
+    function updateClipboard() {
+      fetch('/get')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('clipboard-box').value = data;
+        });
+    }
+
+    function manualUpdate() {
+      updateClipboard(); // One-off fetch when button is clicked
+    }
+  </script>
+</head>
 <body>
-  <h2>Shared Clipboard</h2>
+  <h1>LAN Clipboard</h1>
+
+  <textarea id="clipboard-box" rows="10" cols="50">{{ value }}</textarea><br><br>
+
+  <!-- Toggle checkbox for auto-polling -->
+  <label>
+    <input type="checkbox" onchange="togglePolling(this)"> Auto Update
+  </label>
+  <button onclick="manualUpdate()">Update</button>
+
+  <!-- Form to submit new clipboard content -->
   <form action="/update" method="post">
-    <textarea name="value" rows="10" cols="50">{{ value }}</textarea><br>
-    <button type="submit">Update</button>
+    <input type="text" name="value" placeholder="New clipboard value">
+    <button type="submit">Send</button>
   </form>
 </body>
 </html>
